@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>GAN Face Aging</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           background-color: #f4f4f9;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           height: 100vh;
+           margin: 0;
+       }
+
+
+       .container {
+           width: 90%;
+           max-width: 1000px;
+           background-color: white;
+           padding: 20px;
+           border-radius: 10px;
+           box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+           text-align: center;
+       }
+
+
+       h1 {
+           color: #333;
+           font-size: 24px;
+       }
+
+
+       .image-container {
+           display: flex;
+           justify-content: space-between;
+           margin-top: 15px;
+       }
+
+
+       .image-box {
+           width: 48%;
+
+
+           padding: 10px;
+           background: #fff;
+           border-radius: 10px;
+           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+       }
+
+
+       .image-box img {
+           width: 100%;
+           border-radius: 5px;
+       }
+
+
+       .controls {
+           margin-top: 15px;
+       }
+
+
+       input[type="file"] {
+           width: 100%;
+           padding: 10px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+           margin-bottom: 10px;
+       }
+
+
+       button {
+           padding: 12px;
+           font-size: 16px;
+           width: 48%;
+           background-color: #4CAF50;
+           color: white;
+           border: none;
+           border-radius: 5px;
+           cursor: pointer;
+       }
+
+
+       button:hover {
+           background-color: #45a049;
+       }
+
+
+       #loading {
+           display: none;
+           font-size: 18px;
+           color: #4CAF50;
+           margin-top: 15px;
+       }
+   </style>
+</head>
+<body>
+   <div class="container">
+       <h1>GAN Face Aging</h1>
+       <p>Upload an image and adjust the aging level.</p>
+
+
+       <input type="file" id="fileInput" accept="image/*">
+       <div class="controls">
+           <button onclick="processImage(true)">Aging</button>
+           <button onclick="processImage(false)">De-aging</button>
+       </div>
+
+
+       <div id="loading">Processing...</div>
+
+
+       <div class="image-container">
+           <div class="image-box">
+               <h3>Uploaded Image</h3>
+               <img id="uploadedImage" src="" alt="Uploaded Image" />
+           </div>
+           <div class="image-box">
+               <h3>Processed Image</h3>
+               <img id="processedImage" src="" alt="Processed Image" />
+           </div>
+       </div>
+   </div>
+
+
+   <script>
+       function processImage(ageInput) {
+           var fileInput = document.getElementById("fileInput");
+           var formData = new FormData();
+           var file = fileInput.files[0];
+          
+           if (file) {
+               formData.append("file", file);
+               if (ageInput) {
+                   formData.append("age", "age");
+               } else {
+                   formData.append("deage", "deage");
+               }
+
+
+               document.getElementById("loading").style.display = "block";
+
+
+               fetch("/upload", {
+                   method: "POST",
+                   body: formData
+               })
+               .then(response => response.json())
+               .then(data => {
+                   document.getElementById("loading").style.display = "none";
+                   if (data.output) {
+                       document.getElementById("processedImage").src = data.output;
+                   }
+               });
+           }
+       }
+   </script>
+</body>
+</html>
+
+
